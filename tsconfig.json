@@ -26,6 +26,7 @@
 		"noUnusedParameters": false,
         "outDir": "dist",
         "paths": {
+            "#events": ["./src/events/index"],
             "#interactions": ["./src/interactions/index"],
             "#structs": ["./src/structs/index"],
             "#types/*": ["./src/types/*.d.ts"],
@@ -41,6 +42,6 @@
         "strictNullChecks": false,
         "target": "ESNext",
         "useDefineForClassFields": true,
-        // "verbatimModuleSyntax": true
+        "verbatimModuleSyntax": true
     }
 }

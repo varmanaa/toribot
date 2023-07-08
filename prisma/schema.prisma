@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("POSTGRESQL_DATABASE_URL")
+}
+
+enum GameLocation {
+    PEEL     @map("PEEL")
+    TORONTO  @map("TORONTO")
+    WATERLOO @map("WATERLOO")
+    YORK     @map("YORK")
+}
+
+enum GameType {
+    SOUTH @map("SOUTH")
+}
+
+model Player {
+    id            Int       @id @default(autoincrement())
+    username      String    @unique
+    discordUserId BigInt?   @map("discord_user_id")
+    playerOne     Game[]    @relation("playerOne")
+    playerTwo     Game[]    @relation("playerTwo")
+    playerThree   Game[]    @relation("playerThree")
+    playerFour    Game[]    @relation("playerFour")
+    submitter     Game[]    @relation("submitter")
+    createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+    updatedAt     DateTime? @updatedAt @map("updated_at") @db.Timestamptz()
+
+    @@map("player")
+}
+
+model Game {
+    id               Int          @id @default(autoincrement())
+    playerOneFk      Player       @relation("playerOne", fields: [playerOne], references: [username])
+    playerTwoFk      Player       @relation("playerTwo", fields: [playerTwo], references: [username])
+    playerThreeFk    Player       @relation("playerThree", fields: [playerThree], references: [username])
+    playerFourFk     Player       @relation("playerFour", fields: [playerFour], references: [username])
+    submitterFk      Player       @relation("submitter", fields: [submitter], references: [username])
+    playerOne        String       @map("player_one")
+    playerTwo        String       @map("player_two")
+    playerThree      String       @map("player_three")
+    playerFour       String       @map("player_four")
+    playerOneScore   Int          @map("player_one_score")
+    playerTwoScore   Int          @map("player_two_score")
+    playerThreeScore Int          @map("player_three_score")
+    playerFourScore  Int          @map("player_four_score")
+    submitter        String
+    location         GameLocation
+    type             GameType
+    notes            String       @map("notes")
+    createdAt        DateTime     @default(now()) @map("created_at") @db.Timestamptz()
+    updatedAt        DateTime?    @updatedAt @map("updated_at") @db.Timestamptz()
+}
