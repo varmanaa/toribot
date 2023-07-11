@@ -1,13 +1,18 @@
 import { commands, modals } from '#interactions'
-import { ChatInputCommandInteraction, BaseInteraction, type ToribotClient, ModalSubmitInteraction } from '#structs'
 import {
-    MessageFlags,
+    BaseInteraction,
+    ChatInputCommandInteraction,
+    ModalInteraction,
+    type ToribotClient,
+} from '#structs'
+import {
+    type APIChatInputApplicationCommandInteractionData,
     type APIEmbed,
     type GatewayInteractionCreateDispatchData,
-    type WithIntrinsicProps,
+    MessageFlags,
     PermissionFlagsBits,
     InteractionType,
-    type APIChatInputApplicationCommandInteractionData,
+    type WithIntrinsicProps,
 } from '@discordjs/core'
 
 export async function handleInteractionCreate(client: ToribotClient, payload: WithIntrinsicProps<GatewayInteractionCreateDispatchData>) {
@@ -55,28 +60,34 @@ export async function handleInteractionCreate(client: ToribotClient, payload: Wi
                 username: member.user.username,
                 ...baseOptions
             })
-            const command = commands.get(interaction.data.name)
+            const { name } = interaction.data
+            const command = commands.get(name)
 
             if (!command) {
-                embed.description = `I have received an unknown command with the name "${ interaction.data.name }".`
+                embed.description = `I have received an unknown command with the name "${ name }".`
 
                 await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral })
-                break
-            }
+            } else
+                await command.run(client, interaction)
 
-            await command.run(client, interaction)
             break
         }
         case InteractionType.ModalSubmit: {
-            const interaction = new ModalSubmitInteraction({
+            const interaction = new ModalInteraction({
                 data,
                 username: member.user.username,
                 ...baseOptions
             })
-            const key = interaction.data.custom_id.split('-')[0]
+            const key = interaction.data.custom_id.split(':')[0]
             const modal = modals.get(key)
 
-            await modal.handle(client, interaction)
+            if (!modal) {
+                embed.description = `I have received an unknown modal with the name "${ key }".`
+
+                await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral })
+            } else
+                await modal.handle(client, interaction)
+
             break
         }
         default: {

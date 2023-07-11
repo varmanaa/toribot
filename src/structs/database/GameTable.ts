@@ -1,4 +1,8 @@
-import type { GameLocation, GameType, PrismaClient } from '@prisma/client'
+import type {
+    GameLocation,
+    GameType,
+    PrismaClient
+} from '@prisma/client'
 
 export class GameTable {
     #prisma: PrismaClient

@@ -25,22 +25,20 @@ export type BaseInteractionOptions = {
     token: string
 }
 
-export type ChatInputCommandInteractionOptions = BaseInteractionOptions & {
-    data: APIChatInputApplicationCommandInteractionData,
-    username: string
-}
-
-export interface Command {
-    getAutocompleteChoices?(client: ToribotClient, interaction: ChatInputCommandInteraction)
+export interface ChatInputCommand {
     getCommand(): RESTPostAPIApplicationCommandsJSONBody
     run(client: ToribotClient, interaction: ChatInputCommandInteraction): Promise<void>
 }
+
+export type ChatInputCommandInteractionOptions = WithBaseInteractionOptions<APIChatInputApplicationCommandInteractionData>
 
 export interface Modal {
     handle(client: ToribotClient, interaction: ModalSubmitInteraction): Promise<void>
 }
 
-export type ModalSubmitInteractionOptions = BaseInteractionOptions & {
-    data: APIModalSubmission,
+export type ModalInteractionOptions = WithBaseInteractionOptions<APIModalSubmission>
+
+export interface WithBaseInteractionOptions<T extends APIChatInputApplicationCommandInteractionData | APIModalSubmission> extends BaseInteractionOptions {
+    data: T,
     username: string
 }

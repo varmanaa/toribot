@@ -1,21 +1,21 @@
 import type { ChatInputCommandInteraction, ToribotClient } from '#structs'
-import type { Command } from '#types/interaction'
+import type { ChatInputCommand } from '#types/interaction'
 import {
-    ApplicationCommandOptionType,
+    type APIActionRowComponent,
     type APIApplicationCommandOptionChoice,
-    type RESTPostAPIApplicationCommandsJSONBody,
     type APIInteractionDataOptionBase,
     type APIEmbed,
+    type APIModalInteractionResponseCallbackData,
+    type APITextInputComponent,
+    ApplicationCommandOptionType,
+    ComponentType,
     MessageFlags,
     TextInputStyle,
-    ComponentType,
-    type APIActionRowComponent,
-    type APITextInputComponent,
-    type APIModalInteractionResponseCallbackData
+    type RESTPostAPIApplicationCommandsJSONBody,
 } from '@discordjs/core'
 import { GameLocation, GameType } from '@prisma/client'
 
-export const AddScoreCommand: Command = {
+export const AddScoreCommand: ChatInputCommand = {
     getCommand(): RESTPostAPIApplicationCommandsJSONBody {
         return {
             description: 'Record an in-person game',
@@ -35,7 +35,7 @@ export const AddScoreCommand: Command = {
                 },
                 {
                     choices: [
-                        { name: 'Hanchan', value: GameType.SOUTH }
+                        { name: 'Hanchan', value: GameType.HANCHAN }
                     ],
                     description: 'The game type',
                     name: 'type',
@@ -129,7 +129,7 @@ export const AddScoreCommand: Command = {
                     custom_id: username,
                     label: `Score for ${username}`,
                     max_length: 8,
-                    placeholder: 'Enter score here!',
+                    placeholder: `Enter score for ${username} here!`,
                     required: true,
                     style: TextInputStyle.Short,
                     type: ComponentType.TextInput
@@ -154,8 +154,8 @@ export const AddScoreCommand: Command = {
                     type: ComponentType.ActionRow
                 }
             ],
-            custom_id: `addscore-${location}-${type}`,
-            title: 'Record in-person game'
+            custom_id: `addscore:${location}:${type}`,
+            title: `Record ${type.toLowerCase()} at ${location.charAt(0).toUpperCase()}${location.slice(1).toLowerCase()}`
         }
 
         await interaction.replyWithModal(modal)

@@ -1,4 +1,4 @@
-import type { ChatInputCommandInteractionOptions, AutocompleteFocusedOption } from '#types/interaction'
+import type { AutocompleteFocusedOption, ChatInputCommandInteractionOptions } from '#types/interaction'
 import {
     type APIApplicationCommandOptionChoice,
     type APIChatInputApplicationCommandInteractionData,

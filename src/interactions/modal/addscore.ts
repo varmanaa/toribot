@@ -1,10 +1,10 @@
+import type { ModalInteraction , ToribotClient } from '#structs'
 import type { Modal } from '#types/interaction'
-import type { ModalSubmitInteraction, ToribotClient } from '#structs'
-import type { APIEmbed } from 'discord-api-types/v10'
+import type { APIEmbed } from '@discordjs/core'
 import type { GameLocation, GameType } from '@prisma/client'
 
 export const AddScoreModal: Modal = {
-    async handle (client: ToribotClient, interaction: ModalSubmitInteraction): Promise<void> {
+    async handle (client: ToribotClient, interaction: ModalInteraction ): Promise<void> {
         await interaction.defer()
 
         let embed: Partial<APIEmbed> = { color: 0xF8F8FF }
@@ -16,11 +16,16 @@ export const AddScoreModal: Modal = {
         let totalScore = 0
 
         for (const [username, submittedScore] of values.slice(0, 4)) {
-            if (!/^((0|-?100,?000|-?([1-9]|[1-9]\d?,?\d)00)|(-?(0?\.[1-9]|100(\.0)?|([1-9]\d?(\.\d)?))k?))$/g.test(submittedScore)) {
-                embed.description = 'One or more scores are in an invalid format. Please try again.'
+            if (submittedScore.endsWith('00')) {
+                embed.description = `The score for ${username} must be a multiple of 100 (or end in '00').`
 
                 await interaction.updateReply({ embeds: [embed] })
+                return
+            }
+            if (!/^((0|-?100,?000|-?([1-9]|[1-9]\d?,?\d)00)|(-?(0?\.[1-9]|100(\.0)?|([1-9]\d?(\.\d)?))k?))$/g.test(submittedScore)) {
+                embed.description = `The score for ${username} is in an invalid format.`
 
+                await interaction.updateReply({ embeds: [embed] })
                 return
             }
 
@@ -37,12 +42,11 @@ export const AddScoreModal: Modal = {
                 embed.description = 'The total score exceeds 100,000 points. Please ensure that all scores sum to a maximum of 100,000 points.'
 
                 await interaction.updateReply({ embeds: [embed] })
-
                 return
             }
         }
 
-        const [,location, type] = interaction.data.custom_id.split('-')
+        const [, location, type] = interaction.data.custom_id.split(':')
         const gameId = await client.database.games.insertGame(
             usernames[0],
             usernames[1],

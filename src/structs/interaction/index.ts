@@ -1,3 +1,3 @@
-export * from './ChatInputCommandInteraction.js'
 export * from './BaseInteraction.js'
-export * from './ModalSubmitInteraction.js'
+export * from './ChatInputCommandInteraction.js'
+export * from './ModalInteraction.js'

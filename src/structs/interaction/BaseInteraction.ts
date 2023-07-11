@@ -55,6 +55,19 @@ export class BaseInteraction {
         return message
     }
 
+    public async updateMessage({ ...data }: Pick<APIInteractionResponseCallbackData, 'content' | 'components' | 'embeds' | 'flags'> = {}): Promise<void> {
+        await this.rest.post(
+            Routes.interactionCallback(this.id, this.token),
+            {
+                auth: false,
+                body: {
+                    data,
+                    type: InteractionResponseType.UpdateMessage
+                }
+            }
+        )
+    }
+
     public async updateReply({ ...body }: Pick<APIInteractionResponseCallbackData, 'content' | 'components' | 'embeds' | 'flags'> = {}): Promise<void> {
         await this.rest.patch(
             Routes.webhookMessage(this.applicationId, this.token),

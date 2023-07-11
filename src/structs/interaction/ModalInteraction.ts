@@ -1,14 +1,14 @@
-import type { ModalSubmitInteractionOptions } from '#types/interaction'
-import type { APIModalSubmission } from '@discordjs/core'
+import type { ModalInteractionOptions } from '#types/interaction'
 import { BaseInteraction } from './BaseInteraction.js'
+import type { APIModalSubmission } from '@discordjs/core'
 
-export class ModalSubmitInteraction extends BaseInteraction {
+export class ModalInteraction extends BaseInteraction {
     readonly data: APIModalSubmission
     readonly username: string
 
-    public constructor({ data, username, ...baseOptions }: ModalSubmitInteractionOptions) {
+    public constructor({ data, username, ...baseOptions }: ModalInteractionOptions) {
         super(baseOptions)
-
+        data
         this.data = data
         this.username = username
     }

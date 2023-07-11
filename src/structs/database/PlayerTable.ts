@@ -1,4 +1,4 @@
-import type { PrismaClient, Player } from '@prisma/client'
+import type { Player, PrismaClient } from '@prisma/client'
 
 export class PlayerTable {
     #prisma: PrismaClient
