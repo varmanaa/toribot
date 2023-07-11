@@ -8,7 +8,7 @@ export class ModalInteraction extends BaseInteraction {
 
     public constructor({ data, username, ...baseOptions }: ModalInteractionOptions) {
         super(baseOptions)
-        data
+
         this.data = data
         this.username = username
     }
